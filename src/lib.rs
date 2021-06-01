@@ -49,10 +49,11 @@ fn mandelbrot(cplx: &Complex) -> bool {
     }
     in_set
 }
-/*
-fn initialize_points(x_len: i32, y_len: i32) ->  {
-    let mut points_array = 
-}*/
+
+fn initialize_points(x_len: i32, y_len: i32) -> Vec<Vec<bool>> {
+    let mut points_array = vec![vec![false; x_len as usize] ; y_len as usize];
+    points_array
+}
 
 #[wasm_bindgen(start)]
 pub fn start() {
@@ -70,7 +71,24 @@ pub fn start() {
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap();
 
-    context.fill_text("Hello World", 10.0, 50.0);
+    let height: i32 = canvas.height() as i32;
+    let width: i32 = canvas.width() as i32;
+    let x_step: f64 = 4.0/(width as f64);
+    let y_step: f64 = 4.0/(height as f64);
+
+    // initial values
+    let x: f64 = -2.0;
+    let y: f64 = -2.0;
+
+    let mut points_array = initialize_points(width, height);
+
+    for count_y in 0..height {
+        for count_x in 0..width {
+            points_array[count_y][count_x] = mandelbrot(&build_complex(x,y));
+            x += x_step;
+        }
+        y += y_step;
+    }
 
  /*   // Draw the outer circle.
     context
