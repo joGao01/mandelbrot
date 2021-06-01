@@ -1,4 +1,5 @@
 use std::f64;
+use std::i32;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 
@@ -51,7 +52,7 @@ fn mandelbrot(cplx: &Complex) -> bool {
 }
 
 fn initialize_points(x_len: i32, y_len: i32) -> Vec<Vec<bool>> {
-    let mut points_array = vec![vec![false; x_len as usize] ; y_len as usize];
+    let points_array = vec![vec![false; x_len as usize] ; y_len as usize];
     points_array
 }
 
@@ -77,22 +78,27 @@ pub fn start() {
     let y_step: f64 = 4.0/(height as f64);
 
     // initial values
-    let x: f64 = -2.0;
-    let y: f64 = -2.0;
+    let mut x: f64 = -2.0;
+    let mut y: f64 = -2.0;
 
     let mut points_array = initialize_points(width, height);
 
     for count_y in 0..height {
         for count_x in 0..width {
-            points_array[count_y][count_x] = mandelbrot(&build_complex(x,y));
+            points_array[count_x as usize][count_y as usize] = mandelbrot(&build_complex(x,y));
             x += x_step;
         }
         y += y_step;
     }
 
- /*   // Draw the outer circle.
-    context
-        .arc(75.0, 75.0, 50.0, 0.0, f64::consts::PI * 2.0)
-        .unwrap();
-*/
+    let ylen = points_array.len();
+    let xlen = points_array[0].len();
+
+    for y in 0..ylen {
+        for x in 0..xlen {
+            if points_array[x][y] {
+                context.fill_rect(x as f64, y as f64, 1.0, 1.0);
+            }
+        }
+    }
 }
