@@ -1,5 +1,4 @@
 use std::f64;
-use std::i32;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 
